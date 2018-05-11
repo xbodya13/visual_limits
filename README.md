@@ -1,2 +1,2 @@
-# visual_limits
+# Visual limits
 Shows rigid body constraint limits in viewport
