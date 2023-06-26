@@ -1,7 +1,7 @@
 bl_info = {
 "name": "Visual limits",
 "category": "3D View",
-"version": (1, 1,0),
+"version": (1, 2,0),
 "blender": (2, 80,0),
 "location": "3D View",
 "description": "Shows rigid body constraint limits in viewport",
@@ -12,22 +12,27 @@ bl_info = {
 
 
 import bpy
-import bgl
 import gpu
 import mathutils
+import itertools
 from gpu_extras.batch import batch_for_shader
 # import os
 
 class gv:
-    shader=gpu.shader.from_builtin('3D_SMOOTH_COLOR')
+    shader=gpu.shader.from_builtin('SMOOTH_COLOR')
     shader.bind()
+
+
+
 
 
 
 
 def paint_3d():
     if  bpy.context.space_data.overlay.show_overlays:
-        for selected_object in bpy.context.selected_objects:
+
+        # for selected_object in bpy.data.objects:
+        for selected_object in itertools.chain(bpy.context.selected_objects):
             if selected_object.rigid_body_constraint!=None:
 
                 rbc=selected_object.rigid_body_constraint
@@ -100,8 +105,10 @@ def paint_3d():
                                 last_point=point
 
 
-                bgl.glEnable(bgl.GL_BLEND)
-                bgl.glDisable(bgl.GL_DEPTH_TEST)
+                # bgl.glEnable(bgl.GL_BLEND)
+                gpu.state.blend_set('ALPHA')
+                # bgl.glDisable(bgl.GL_DEPTH_TEST)
+                gpu.state.depth_mask_set(False)
 
 
                 render_batch=batch_for_shader(gv.shader,'TRIS',{"pos":points,"color":point_colors})
@@ -111,8 +118,10 @@ def paint_3d():
 
                 points=[]
                 point_colors=[]
-                bgl.glDisable(bgl.GL_BLEND)
-                bgl.glLineWidth(2)
+                # bgl.glDisable(bgl.GL_BLEND)
+                gpu.state.blend_set('NONE')
+                # bgl.glLineWidth(2)
+                gpu.state.line_width_set(2)
 
                 for (allowed,use_linear,low,up),color in zip(linear_limits,solid_colors):
                     if use_linear:
@@ -127,7 +136,8 @@ def paint_3d():
                 render_batch=batch_for_shader(gv.shader,'LINES',{"pos":points,"color":point_colors})
                 render_batch.draw(gv.shader)
 
-                bgl.glPointSize(8)
+                # bgl.glPointSize(8)
+                gpu.state.point_size_set(8)
                 render_batch=batch_for_shader(gv.shader,'POINTS',{"pos":points,"color":point_colors})
                 render_batch.draw(gv.shader)
 
