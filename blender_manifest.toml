@@ -1,0 +1,22 @@
+schema_version = "1.0.0"
+
+id = "visual_limits"
+version = "1.3.0"
+name = "Visual limits"
+tagline = "This addon shows rigid body constraint limits in viewport"
+maintainer = "xbodya13 <xbodya13@gmail.com>"
+type = "add-on"
+
+website = "https://github.com/xbodya13/visual_limits"
+
+tags = ["Animation"]
+
+blender_version_min = "4.3.0"
+
+license = [
+  "SPDX:GPL-3.0-or-later",
+]
+
+
+
+
